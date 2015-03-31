@@ -162,12 +162,42 @@ function findChampSpells() {
             },
             success: function (json) {
 				championArray = json['data'];
+				console.log(championArray);
 				var resultMatched = false;
 				for(var champData in json['data']){
 					var champion = json['data'][champData];
-					
 					if(((champion.name).toLowerCase())==($champ_name.toLowerCase()) ){
+					
+						
+						var q_tt = champion.spells[0].sanitizedTooltip;
+						
+						var tempArray = new Array();
 
+						while (q_tt.indexOf("{") != -1) {
+
+							var n = q_tt.indexOf("{");
+							tempArray.push(q_tt.substr(n,8));
+							q_tt = q_tt.slice(n+8);
+						}
+						q_tt = champion.spells[0].sanitizedTooltip;
+						for (var i = 0; i < tempArray.length; i++){
+
+							if(tempArray[i].substr(3,1).startsWith("e")){
+								q_tt = q_tt.replace(tempArray[i], champion.spells[0].effectBurn[tempArray[i].substr(4,1)]);
+							}else {
+								for(var varsObj in champion.spells[0].vars){
+									var obj = champion.spells[0].vars[varsObj];
+
+									if(tempArray[i].substr(3,2).startsWith(obj.key)){
+										q_tt = q_tt.replace(tempArray[i], obj.coeff[0] + " " + obj.link);
+									}
+								}
+								
+							}
+
+						}
+						console.log(q_tt);
+						
 						cName = champion.name;
 						
 						cTitle = champion.title;
@@ -175,7 +205,7 @@ function findChampSpells() {
 						cSpellPassiveDescription = champion.passive.description;
 						cSpellQ = champion.spells[0].name;
 						cSpellQCooldown = champion.spells[0].cooldownBurn;
-						cSpellQDescription = champion.spells[0].description;
+						cSpellQDescription = q_tt;// champion.spells[0].description;
 						cSpellW = champion.spells[1].name;
 						cSpellWCooldown = champion.spells[1].cooldownBurn;
 						cSpellWDescription = champion.spells[1].description;
@@ -192,16 +222,16 @@ function findChampSpells() {
 						document.getElementById("spellPassive").innerHTML = 'Passive: ' + cSpellPassive;
 						document.getElementById("spellPassiveDescription").innerHTML = cSpellPassiveDescription;
 						document.getElementById("spellQ").innerHTML = 'Q: ' + cSpellQ;
-						document.getElementById("spellQCooldown").innerHTML = 'CD: ' + cSpellQCooldown + ' sec';
+						document.getElementById("spellQCooldown").innerHTML = 'CD: ' + cSpellQCooldown;
 						document.getElementById("spellQDescription").innerHTML = cSpellQDescription;
 						document.getElementById("spellW").innerHTML = 'W: ' + cSpellW;
-						document.getElementById("spellWCooldown").innerHTML = 'CD: ' + cSpellWCooldown + ' sec';
+						document.getElementById("spellWCooldown").innerHTML = 'CD: ' + cSpellWCooldown;
 						document.getElementById("spellWDescription").innerHTML = cSpellWDescription;
 						document.getElementById("spellE").innerHTML = 'E: ' + cSpellE;
-						document.getElementById("spellECooldown").innerHTML = 'CD: ' + cSpellECooldown + ' sec';
+						document.getElementById("spellECooldown").innerHTML = 'CD: ' + cSpellECooldown;
 						document.getElementById("spellEDescription").innerHTML = cSpellEDescription;
 						document.getElementById("spellR").innerHTML = 'R: ' + cSpellR;
-						document.getElementById("spellRCooldown").innerHTML = 'CD: ' + cSpellRCooldown + ' sec';
+						document.getElementById("spellRCooldown").innerHTML = 'CD: ' + cSpellRCooldown;
 						document.getElementById("spellRDescription").innerHTML = cSpellRDescription;
 						document.getElementById("logo").innerHTML = '<img src="http://ddragon.leagueoflegends.com/cdn/5.5.3/img/champion/' + cLogo + '" style="height:80px; width:80px;">';
 						
@@ -350,7 +380,7 @@ var cName = 'Irelia';
 		</div>
 	</div>
 </div>
-
+<div id="des" class="des"></div>
 </body>
 
 </html>
