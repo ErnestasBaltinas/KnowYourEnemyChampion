@@ -1,0 +1,359 @@
+<html>
+
+<head>
+<title>Know Your Enemy Champion</title>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+<style>
+.main {
+    width: 400px;
+    padding: 25px;
+    border: 1px solid blue;
+    margin: 25px;
+	background-image: url("http://i.imgur.com/RKSDJBy.png");
+}
+
+#loading img {
+	display: block;
+	margin: auto auto;
+}
+
+#infoHeader{
+	height:90px;
+	color: white;
+}
+
+#logo {
+	float: left;
+	padding: 5px;
+}
+
+.spellBlock{
+	padding: 2px;
+    margin: auto;
+}
+
+.spellHeader{
+	background:#8BBDFB;
+	-webkit-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+	box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+	position: relative;
+	padding-left: 5px;
+}
+.spellDescription{
+	padding: 10px;
+	font-size: 90%;
+	margin-left: 15px;
+	margin-right: 10px;
+	background:#8BA5FB;
+	-webkit-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+	box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+
+}
+.spellName {
+    width: 50%;
+    float: left;
+}
+.passiveName {
+}
+.spellCooldown {
+    margin-left: 45%;
+
+}
+</style>
+
+<script type="text/javascript">
+
+var API_KEY = "eb8c5fed-4c7d-4732-80e8-1be1e6bd8a0a";
+var sumName = "";
+var championArray = null;
+
+
+ $( document ).ready(function() {
+	$("#loading").hide();	
+	$("#infoFrame").hide();
+	$(".spellDescription").hide();
+	$("#alert").hide();
+ 
+	$("#spellPassive").click(function(){
+		$("#spellPassiveDescription").slideToggle();
+	}).css("cursor", "pointer");
+	
+	$("#spellQ").click(function(){
+		$("#spellQDescription").slideToggle();
+	}).css("cursor", "pointer");
+	$("#spellQCooldown").click(function(){
+		$("#spellQDescription").slideToggle();
+	}).css("cursor", "pointer");
+	
+	$("#spellW").click(function(){
+		$("#spellWDescription").slideToggle();
+	}).css("cursor", "pointer");
+	$("#spellWCooldown").click(function(){
+		$("#spellWDescription").slideToggle();
+	}).css("cursor", "pointer");
+	
+	$("#spellE").click(function(){
+		$("#spellEDescription").slideToggle();
+	}).css("cursor", "pointer");
+	$("#spellECooldown").click(function(){
+		$("#spellEDescription").slideToggle();
+	}).css("cursor", "pointer");	
+	
+ 	$("#spellR").click(function(){
+		$("#spellRDescription").slideToggle();
+	}).css("cursor", "pointer");
+	$("#spellRCooldown").click(function(){
+		$("#spellRDescription").slideToggle();
+	}).css("cursor", "pointer");
+ 
+ 
+	$.ajax({
+		url: 'https://global.api.pvp.net/api/lol/static-data/euw/v1.2/champion?api_key=' + API_KEY,
+		type: 'GET',
+		dataType: 'json',
+		data: {
+
+		},
+		success: function (json) {
+			var championArrayOnly = [];												
+
+			for(var val in json['data']){
+				var obj = json['data'][val];
+				championArrayOnly.push(obj.name);
+
+			}
+			
+			championArrayOnly.sort();
+			//console.log();
+			
+			for (i = 0; i < championArrayOnly.length; i++) { 
+				var option = $('<option value="'+ championArrayOnly[i] +'">'+ championArrayOnly[i] +'</option>');
+				$('#champions').append(option);
+				//console.log(option);
+			}	
+		},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			alert("error getting Summoner data!");
+		}
+	});
+});
+
+
+
+
+function findChampSpells() {
+	
+	$champ_name = $("#champSearch").val();
+	$("#loading").show();	
+    if (API_KEY !== "") {
+        $.ajax({
+            url: 'https://global.api.pvp.net/api/lol/static-data/euw/v1.2/champion?champData=all&api_key=' + API_KEY,
+            type: 'GET',
+            dataType: 'json',
+            data: {
+
+            },
+            success: function (json) {
+				championArray = json['data'];
+				var resultMatched = false;
+				for(var champData in json['data']){
+					var champion = json['data'][champData];
+					
+					if(((champion.name).toLowerCase())==($champ_name.toLowerCase()) ){
+
+						cName = champion.name;
+						
+						cTitle = champion.title;
+						cSpellPassive = champion.passive.name;
+						cSpellPassiveDescription = champion.passive.description;
+						cSpellQ = champion.spells[0].name;
+						cSpellQCooldown = champion.spells[0].cooldownBurn;
+						cSpellQDescription = champion.spells[0].description;
+						cSpellW = champion.spells[1].name;
+						cSpellWCooldown = champion.spells[1].cooldownBurn;
+						cSpellWDescription = champion.spells[1].description;
+						cSpellE = champion.spells[2].name;
+						cSpellECooldown = champion.spells[2].cooldownBurn;
+						cSpellEDescription = champion.spells[2].description;
+						cSpellR = champion.spells[3].name;
+						cSpellRCooldown = champion.spells[3].cooldownBurn;
+						cSpellRDescription = champion.spells[3].description;
+						cLogo = champion.image.full;
+						
+						document.getElementById("champName").innerHTML = cName;
+						document.getElementById("champTitle").innerHTML = cTitle;
+						document.getElementById("spellPassive").innerHTML = 'Passive: ' + cSpellPassive;
+						document.getElementById("spellPassiveDescription").innerHTML = cSpellPassiveDescription;
+						document.getElementById("spellQ").innerHTML = 'Q: ' + cSpellQ;
+						document.getElementById("spellQCooldown").innerHTML = 'CD: ' + cSpellQCooldown + ' sec';
+						document.getElementById("spellQDescription").innerHTML = cSpellQDescription;
+						document.getElementById("spellW").innerHTML = 'W: ' + cSpellW;
+						document.getElementById("spellWCooldown").innerHTML = 'CD: ' + cSpellWCooldown + ' sec';
+						document.getElementById("spellWDescription").innerHTML = cSpellWDescription;
+						document.getElementById("spellE").innerHTML = 'E: ' + cSpellE;
+						document.getElementById("spellECooldown").innerHTML = 'CD: ' + cSpellECooldown + ' sec';
+						document.getElementById("spellEDescription").innerHTML = cSpellEDescription;
+						document.getElementById("spellR").innerHTML = 'R: ' + cSpellR;
+						document.getElementById("spellRCooldown").innerHTML = 'CD: ' + cSpellRCooldown + ' sec';
+						document.getElementById("spellRDescription").innerHTML = cSpellRDescription;
+						document.getElementById("logo").innerHTML = '<img src="http://ddragon.leagueoflegends.com/cdn/5.5.3/img/champion/' + cLogo + '" style="height:80px; width:80px;">';
+						
+						resultMatched = true;
+						break;
+					}
+				}	
+				if(!resultMatched){
+					$("#alert").show();
+					document.getElementById("alert").innerHTML = "Champion: " + $champ_name + " not found!";
+				}else{
+					$("#alert").hide();
+				}
+				$("#loading").hide();	
+				$("#infoFrame").show();			
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("error getting Summoner data!");
+            }
+        });	
+    } else {
+		console.log( "3 Oh man! Something went wrong!");
+	}
+	
+	
+}
+
+function getChampionID($champion_name, callback) {
+
+    var cName = $champion_name;
+	var cID = -1;
+    if (API_KEY !== "" && $champion_name) {
+        $.ajax({
+            url: 'https://global.api.pvp.net/api/lol/static-data/euw/v1.2/champion?api_key=' + API_KEY,
+            type: 'GET',
+            dataType: 'json',
+            data: {
+            },
+            success: function (json) {
+			var championArray = json['data'];
+			
+			console.log('2 ' + championArray[cName].id);
+			champ_id = championArray[cName].id;
+			
+			cID = champ_id;
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("error getting Summoner data!");
+            }
+        });
+    } else {}
+	callback(cID);
+	
+}
+function test() {
+var cName = 'Irelia';
+	var cID = -1;
+    if (API_KEY !== "") {
+        $.ajax({
+            url: 'https://global.api.pvp.net/api/lol/static-data/euw/v1.2/champion?champData=all&api_key=eb8c5fed-4c7d-4732-80e8-1be1e6bd8a0a',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+            },
+            success: function (json) {
+			var championArray = json['data'];
+			
+			console.log(championArray[cName].title);
+			console.log(championArray[cName].passive.name);
+			console.log(championArray[cName].spells[0].name);
+			console.log(championArray[cName].spells[1].name);
+			console.log(championArray[cName].spells[2].name);
+			console.log(championArray[cName].spells[3].name);
+			//champ_id = championArray[cName].id;
+			
+			//cID = champ_id;
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("error getting Summoner data!");
+            }
+        });
+    } else {}
+	//callback(cID);
+	
+}
+</script>
+</head>
+<body>
+ <div class="main">
+	 <div class="input-group" >
+		<input type="text" class="form-control navbar-search" placeholder="Search a champion" id="champSearch" value="Irelia">
+		<span class="input-group-addon btn-default" onClick="findChampSpells();">
+			<span class="glyphicon glyphicon-search"></span>
+		</span>
+	</div>
+	<div class="alert alert-danger" role="alert" id="alert"></div>
+	<div id="loading"><img src="http://i.imgur.com/UWlXPr1.gif" alt="loading"></div>
+
+	
+	<div id="infoFrame">
+		<div id="infoHeader">
+			<span id="header">
+				<div id="logo"></div>
+				<h3 id="champName"></h3> 
+				<h4 id="champTitle"></h4>
+			</span>
+		</div>
+
+		<div class="spellBlock">
+			<div class="spellHeader" id="spellHeader">
+				<div id="spellPassive" class="passiveName"></div>
+			</div>
+			<div id="spellPassiveDescription" class="spellDescription"></div>
+		</div>
+		<div class="spellBlock">
+			<div class="spellHeader" id="spellHeader">
+				<div id="spellQ" class="spellName"></div>
+				<div id="spellQCooldown" class="spellCooldown"></div>
+			</div>
+			<div id="spellQDescription" class="spellDescription"></div>
+		</div>
+
+		<div class="spellBlock">
+			<div class="spellHeader" id="spellHeader">
+				<div id="spellW" class="spellName"></div>
+				<div id="spellWCooldown" class="spellCooldown"></div>
+			</div>
+			<div id="spellWDescription" class="spellDescription"></div>
+		</div>
+
+		<div class="spellBlock">
+			<div class="spellHeader" id="spellHeader">
+				<div id="spellE" class="spellName"></div>
+				<div id="spellECooldown" class="spellCooldown"></div>
+			</div>
+			<div id="spellEDescription" class="spellDescription"></div>
+		</div>
+		<div class="spellBlock">
+			<div class="spellHeader" id="spellHeader">
+				<div id="spellR" class="spellName"></div>
+				<div id="spellRCooldown" class="spellCooldown"></div>
+			</div>
+			<div id="spellRDescription" class="spellDescription"></div>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>
+
+
+
